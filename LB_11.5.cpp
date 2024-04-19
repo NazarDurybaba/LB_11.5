@@ -1,11 +1,11 @@
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <string>
-#include <algorithm>
 #include <Windows.h>
-#include <limits> 
-#include <map> 
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <limits>
+#include <map>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -23,8 +23,8 @@ struct Faculty {
 
 struct Institute {
     string name;
-    vector<Faculty> faculties;
-};
+    vector<Faculty> faculties; 
+}; 
 
 struct Record {
     Institute institute;
@@ -84,7 +84,8 @@ void replaceInFile(const string& filename, const Record& record, int index) {
 }
 
 // Функція для видалення даних з файлу
-void deleteFromFile(const string& filename, const string& instituteName, const string& facultyName, const string& surname) {
+void deleteFromFile(const string& filename, const string& instituteName,
+    const string& facultyName, const string& surname) {
     vector<Record> records = readFromFile(filename);
     vector<Record> filteredRecords;
 
@@ -105,7 +106,8 @@ void deleteFromFile(const string& filename, const string& instituteName, const s
         filteredRecords.push_back(record);
     }
 
-    // Відкриваємо файл для запису, замінюємо його вміст відповідно до нового вектора filteredRecords
+    // Відкриваємо файл для запису, замінюємо його вміст відповідно до нового
+    // вектора filteredRecords
     ofstream file(filename, ios::binary);
     if (!file) {
         cerr << "Не вдалося відкрити файл для запису.\n";
@@ -117,31 +119,39 @@ void deleteFromFile(const string& filename, const string& instituteName, const s
     file.close();
 }
 
-// Функція для знаходження прізвищ студентів з мінімальним середнім балом на вказаному курсі та групі
-vector<pair<string, double>> findStudentsWithMinGrade(const vector<Record>& records, int course, const string& group, double& minGrade) {
+// Функція для знаходження прізвищ студентів з мінімальним середнім балом на
+// вказаному курсі та групі
+vector<pair<string, double>>
+findStudentsWithMinGrade(const vector<Record>& records, int course,
+    const string& group, double& minGrade) {
     vector<pair<string, double>> result;
     for (const auto& record : records) {
         const auto& student = record.student;
-        if (student.course == course && student.group == group && student.average_grade < minGrade) {
+        if (student.course == course && student.group == group &&
+            student.average_grade < minGrade) {
             result.clear();
             result.push_back(make_pair(student.surname, student.average_grade));
             minGrade = student.average_grade;
         }
-        else if (student.course == course && student.group == group && student.average_grade == minGrade) {
+        else if (student.course == course && student.group == group &&
+            student.average_grade == minGrade) {
             result.push_back(make_pair(student.surname, student.average_grade));
         }
     }
     return result;
 }
 
-// Функція для знаходження факультетів та груп з найбільшою кількістю відмінників
+// Функція для знаходження факультетів та груп з найбільшою кількістю
+// відмінників
 void findFacultiesWithTopStudents(const vector<Record>& records) {
     map<string, int> facultyCounts;
     map<string, int> groupCounts;
 
     for (const auto& record : records) {
-        const auto& facultyName = record.institute.name + " - " + record.student.surname;
-        const auto& groupName = record.institute.name + " - " + record.student.group;
+        const auto& facultyName =
+            record.institute.name + " - " + record.student.surname;
+        const auto& groupName =
+            record.institute.name + " - " + record.student.group;
 
         // Перевірка, чи студент є відмінником (середній бал 5)
         if (record.student.average_grade == 5) {
@@ -177,14 +187,16 @@ void findFacultiesWithTopStudents(const vector<Record>& records) {
 
 int main() {
     SetConsoleOutputCP(1251);
-    vector<Record> records; 
+    vector<Record> records;
 
     while (true) {
         cout << "1. Додати дані до файлу\n";
         cout << "2. Замінити дані у файлі\n";
         cout << "3. Видалити дані з файлу\n";
-        cout << "4. Знайти факультети та групи з найбільшою кількістю відмінників\n";
-        cout << "5. Знайти прізвища студентів з мінімальним середнім балом на вказаному курсі та групі\n";
+        cout
+            << "4. Знайти факультети та групи з найбільшою кількістю відмінників\n";
+        cout << "5. Знайти прізвища студентів з мінімальним середнім балом на "
+            "вказаному курсі та групі\n";
         cout << "6. Вийти\n";
         cout << "Виберіть опцію: ";
 
@@ -197,8 +209,13 @@ int main() {
             cout << "Введіть дані для нового запису:" << endl;
             cout << "Ім'я інституту: ";
             cin >> newRecord.institute.name;
+
+            // Додаємо факультет до інституту
+            Faculty newFaculty;
             cout << "Ім'я факультету: ";
-            cin >> newRecord.institute.faculties[0].name; // Змінено тут
+            cin >> newFaculty.name;
+            newRecord.institute.faculties.push_back(newFaculty); // Додано цей рядок
+
             cout << "Прізвище студента: ";
             cin >> newRecord.student.surname;
             cout << "Курс: ";
@@ -234,29 +251,34 @@ int main() {
             string instituteName, facultyName, surname;
             cout << "Введіть ім'я інституту: ";
             cin >> instituteName;
-            cout << "Введіть ім'я факультету (або залиште порожнім, якщо хочете видалити інститут): ";
+            cout << "Введіть ім'я факультету (або залиште порожнім, якщо хочете "
+                "видалити інститут): ";
             cin >> facultyName;
-            cout << "Введіть прізвище студента (або залиште порожнім, якщо хочете видалити факультет): ";
+            cout << "Введіть прізвище студента (або залиште порожнім, якщо хочете "
+                "видалити факультет): ";
             cin >> surname;
             deleteFromFile("data.bin", instituteName, facultyName, surname);
             break;
         }
         case 4: {
-            findFacultiesWithTopStudents(records); // Пошук факультетів та груп з найбільшою кількістю відмінників
+            findFacultiesWithTopStudents(records); // Пошук факультетів та груп з
+            // найбільшою кількістю відмінників
             break;
         }
         case 5: {
             int course;
             string group;
-            double minGrade = DBL_MAX; 
+            double minGrade = DBL_MAX;
             string minSurname;
             cout << "Введіть курс: ";
             cin >> course;
             cout << "Введіть групу: ";
             cin >> group;
-            vector<pair<string, double>> students = findStudentsWithMinGrade(records, course, group, minGrade);
+            vector<pair<string, double>> students =
+                findStudentsWithMinGrade(records, course, group, minGrade);
             if (!students.empty()) {
-                cout << "Студент(и) з мінімальним середнім балом на курсі " << course << " та групі " << group << ":" << endl;
+                cout << "Студент(и) з мінімальним середнім балом на курсі " << course
+                    << " та групі " << group << ":" << endl;
                 for (const auto& student : students) {
                     cout << student.first << " (" << student.second << ")" << endl;
                 }
@@ -267,7 +289,7 @@ int main() {
             break;
         }
         case 6:
-            return 0; 
+            return 0;
         default:
             cout << "Неправильний вибір. Спробуйте знову.\n";
         }
